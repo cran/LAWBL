@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>pcfa-examples</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">pcfa-examples</h1>
+
+
+
+<p><strong>Note: the estimation process can be time consuming depending on the computing power. You can same some time by reducing the length of the chains.</strong></p>
+<div id="continuous-data-wo-local-dependence" class="section level2">
+<h2>Continuous Data w/o Local Dependence:</h2>
+<ol style="list-style-type: decimal">
+<li>Load the package, obtain the data, loading pattern (<em>qlam</em>), and setup the design matrix Q.</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(LAWBL)</span>
+<span id="cb1-2"><a href="#cb1-2"></a>dat &lt;-<span class="st"> </span>sim18cfa0<span class="op">$</span>dat</span>
+<span id="cb1-3"><a href="#cb1-3"></a>J &lt;-<span class="st"> </span><span class="kw">ncol</span>(dat) <span class="co"># no. of items</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>K &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># no. of factors</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>qlam &lt;-<span class="st"> </span>sim18cfa0<span class="op">$</span>qlam</span>
+<span id="cb1-6"><a href="#cb1-6"></a>qlam</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt;       [,1] [,2] [,3]</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt;  [1,]  0.7  0.0  0.0</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt;  [2,]  0.7  0.0  0.0</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt;  [3,]  0.7  0.0  0.0</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#&gt;  [4,]  0.7  0.0  0.0</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt;  [5,]  0.7  0.4  0.0</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#&gt;  [6,]  0.7  0.4  0.0</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">#&gt;  [7,]  0.0  0.7  0.0</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">#&gt;  [8,]  0.0  0.7  0.0</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">#&gt;  [9,]  0.0  0.7  0.0</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">#&gt; [10,]  0.0  0.7  0.0</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">#&gt; [11,]  0.0  0.7  0.4</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">#&gt; [12,]  0.0  0.7  0.4</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">#&gt; [13,]  0.0  0.0  0.7</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="co">#&gt; [14,]  0.0  0.0  0.7</span></span>
+<span id="cb1-22"><a href="#cb1-22"></a><span class="co">#&gt; [15,]  0.0  0.0  0.7</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">#&gt; [16,]  0.0  0.0  0.7</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">#&gt; [17,]  0.4  0.0  0.7</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">#&gt; [18,]  0.4  0.0  0.7</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a></span>
+<span id="cb1-27"><a href="#cb1-27"></a>Q&lt;-<span class="kw">matrix</span>(<span class="op">-</span><span class="dv">1</span>,J,K); <span class="co"># -1 for unspecified items</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a>Q[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,<span class="dv">1</span>]&lt;-Q[<span class="dv">7</span><span class="op">:</span><span class="dv">8</span>,<span class="dv">2</span>]&lt;-Q[<span class="dv">13</span><span class="op">:</span><span class="dv">14</span>,<span class="dv">3</span>]&lt;-<span class="dv">1</span> <span class="co"># 1 for specified items</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a>Q</span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="co">#&gt;       [,1] [,2] [,3]</span></span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="co">#&gt;  [1,]    1   -1   -1</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="co">#&gt;  [2,]    1   -1   -1</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a><span class="co">#&gt;  [3,]   -1   -1   -1</span></span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="co">#&gt;  [4,]   -1   -1   -1</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a><span class="co">#&gt;  [5,]   -1   -1   -1</span></span>
+<span id="cb1-36"><a href="#cb1-36"></a><span class="co">#&gt;  [6,]   -1   -1   -1</span></span>
+<span id="cb1-37"><a href="#cb1-37"></a><span class="co">#&gt;  [7,]   -1    1   -1</span></span>
+<span id="cb1-38"><a href="#cb1-38"></a><span class="co">#&gt;  [8,]   -1    1   -1</span></span>
+<span id="cb1-39"><a href="#cb1-39"></a><span class="co">#&gt;  [9,]   -1   -1   -1</span></span>
+<span id="cb1-40"><a href="#cb1-40"></a><span class="co">#&gt; [10,]   -1   -1   -1</span></span>
+<span id="cb1-41"><a href="#cb1-41"></a><span class="co">#&gt; [11,]   -1   -1   -1</span></span>
+<span id="cb1-42"><a href="#cb1-42"></a><span class="co">#&gt; [12,]   -1   -1   -1</span></span>
+<span id="cb1-43"><a href="#cb1-43"></a><span class="co">#&gt; [13,]   -1   -1    1</span></span>
+<span id="cb1-44"><a href="#cb1-44"></a><span class="co">#&gt; [14,]   -1   -1    1</span></span>
+<span id="cb1-45"><a href="#cb1-45"></a><span class="co">#&gt; [15,]   -1   -1   -1</span></span>
+<span id="cb1-46"><a href="#cb1-46"></a><span class="co">#&gt; [16,]   -1   -1   -1</span></span>
+<span id="cb1-47"><a href="#cb1-47"></a><span class="co">#&gt; [17,]   -1   -1   -1</span></span>
+<span id="cb1-48"><a href="#cb1-48"></a><span class="co">#&gt; [18,]   -1   -1   -1</span></span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>E-step:</strong> Estimate with the PCFA-LI model (E-step) by setting <em>LD=F</em>. Only a few loadings need to be specified in Q (e.g., 2 per factor). Longer chain is suggested for stabler performance (<em>burn=iter=5,000</em> by default). Note the sampling information is updated every 1000 draws by default, with <em>Feigen</em> for factorial eigenvalue, “<em>NLA_lg3</em>” for no. of <span class="math inline">\(\lambda\)</span> larger than .3, <em>Shrink</em> for shrinkage, and <em>Adj PSR</em> for adjusted PSRF. Estimates are close to the true values.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>m0 &lt;-<span class="st"> </span><span class="kw">pcfa</span>(<span class="dt">dat =</span> dat, <span class="dt">Q =</span> Q,<span class="dt">LD =</span> <span class="ot">FALSE</span>, <span class="dt">burn =</span> <span class="dv">2000</span>, <span class="dt">iter =</span> <span class="dv">2000</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># summarize basic information</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">summary</span>(m0)</span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co">#&gt; $N</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt; [1] 500</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#&gt; </span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co">#&gt; $J</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt; [1] 18</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; </span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; $K</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; [1] 3</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; </span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="co">#&gt; $`Miss%`</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co">#&gt; </span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co">#&gt; $`LD enabled`</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="co">#&gt; [1] FALSE</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co">#&gt; </span></span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="co">#&gt; $`Burn in`</span></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="co">#&gt; [1] 2000</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="co">#&gt; </span></span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="co">#&gt; $Iteration</span></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co">#&gt; [1] 2000</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="co">#&gt; </span></span>
+<span id="cb2-26"><a href="#cb2-26"></a><span class="co">#&gt; $`No. of sig lambda`</span></span>
+<span id="cb2-27"><a href="#cb2-27"></a><span class="co">#&gt; [1] 24</span></span>
+<span id="cb2-28"><a href="#cb2-28"></a><span class="co">#&gt; </span></span>
+<span id="cb2-29"><a href="#cb2-29"></a><span class="co">#&gt; $`Adj. PSR`</span></span>
+<span id="cb2-30"><a href="#cb2-30"></a><span class="co">#&gt;    Point est. Upper C.I.</span></span>
+<span id="cb2-31"><a href="#cb2-31"></a><span class="co">#&gt; F1   1.159097   1.437669</span></span>
+<span id="cb2-32"><a href="#cb2-32"></a><span class="co">#&gt; F2   1.377527   2.323779</span></span>
+<span id="cb2-33"><a href="#cb2-33"></a><span class="co">#&gt; F3   1.069836   1.274876</span></span>
+<span id="cb2-34"><a href="#cb2-34"></a></span>
+<span id="cb2-35"><a href="#cb2-35"></a><span class="co">#summarize significant loadings in pattern/Q-matrix format</span></span>
+<span id="cb2-36"><a href="#cb2-36"></a><span class="kw">summary</span>(m0, <span class="dt">what =</span> <span class="st">&#39;qlambda&#39;</span>) </span>
+<span id="cb2-37"><a href="#cb2-37"></a><span class="co">#&gt;          [,1]      [,2]      [,3]</span></span>
+<span id="cb2-38"><a href="#cb2-38"></a><span class="co">#&gt; I1  0.7006520 0.0000000 0.0000000</span></span>
+<span id="cb2-39"><a href="#cb2-39"></a><span class="co">#&gt; I2  0.7129764 0.0000000 0.0000000</span></span>
+<span id="cb2-40"><a href="#cb2-40"></a><span class="co">#&gt; I3  0.7201485 0.0000000 0.0000000</span></span>
+<span id="cb2-41"><a href="#cb2-41"></a><span class="co">#&gt; I4  0.6764871 0.0000000 0.0000000</span></span>
+<span id="cb2-42"><a href="#cb2-42"></a><span class="co">#&gt; I5  0.7018335 0.3981160 0.0000000</span></span>
+<span id="cb2-43"><a href="#cb2-43"></a><span class="co">#&gt; I6  0.6705350 0.4148202 0.0000000</span></span>
+<span id="cb2-44"><a href="#cb2-44"></a><span class="co">#&gt; I7  0.0000000 0.7219834 0.0000000</span></span>
+<span id="cb2-45"><a href="#cb2-45"></a><span class="co">#&gt; I8  0.0000000 0.7758877 0.0000000</span></span>
+<span id="cb2-46"><a href="#cb2-46"></a><span class="co">#&gt; I9  0.0000000 0.7342936 0.0000000</span></span>
+<span id="cb2-47"><a href="#cb2-47"></a><span class="co">#&gt; I10 0.0000000 0.6643274 0.0000000</span></span>
+<span id="cb2-48"><a href="#cb2-48"></a><span class="co">#&gt; I11 0.0000000 0.6936387 0.3736486</span></span>
+<span id="cb2-49"><a href="#cb2-49"></a><span class="co">#&gt; I12 0.0000000 0.6626755 0.4260824</span></span>
+<span id="cb2-50"><a href="#cb2-50"></a><span class="co">#&gt; I13 0.0000000 0.0000000 0.6365149</span></span>
+<span id="cb2-51"><a href="#cb2-51"></a><span class="co">#&gt; I14 0.0000000 0.0000000 0.6849702</span></span>
+<span id="cb2-52"><a href="#cb2-52"></a><span class="co">#&gt; I15 0.0000000 0.0000000 0.7129319</span></span>
+<span id="cb2-53"><a href="#cb2-53"></a><span class="co">#&gt; I16 0.0000000 0.0000000 0.7902067</span></span>
+<span id="cb2-54"><a href="#cb2-54"></a><span class="co">#&gt; I17 0.3956917 0.0000000 0.7233275</span></span>
+<span id="cb2-55"><a href="#cb2-55"></a><span class="co">#&gt; I18 0.3888041 0.0000000 0.7186225</span></span>
+<span id="cb2-56"><a href="#cb2-56"></a></span>
+<span id="cb2-57"><a href="#cb2-57"></a><span class="co">#factorial eigenvalue</span></span>
+<span id="cb2-58"><a href="#cb2-58"></a><span class="kw">summary</span>(m0,<span class="dt">what=</span><span class="st">&#39;eigen&#39;</span>) </span>
+<span id="cb2-59"><a href="#cb2-59"></a><span class="co">#&gt;         est        sd    lower    upper sig</span></span>
+<span id="cb2-60"><a href="#cb2-60"></a><span class="co">#&gt; F1 3.332857 0.4751161 2.472778 4.148886   1</span></span>
+<span id="cb2-61"><a href="#cb2-61"></a><span class="co">#&gt; F2 3.485774 0.5385707 2.567001 4.614304   1</span></span>
+<span id="cb2-62"><a href="#cb2-62"></a><span class="co">#&gt; F3 3.492405 0.4823052 2.616686 4.444067   1</span></span>
+<span id="cb2-63"><a href="#cb2-63"></a></span>
+<span id="cb2-64"><a href="#cb2-64"></a><span class="co">#plotting factorial eigenvalue</span></span>
+<span id="cb2-65"><a href="#cb2-65"></a><span class="kw">par</span>(<span class="dt">mar =</span> <span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
+<span id="cb2-66"><a href="#cb2-66"></a><span class="kw">plot_eigen</span>(m0) <span class="co"># trace</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">plot_eigen</span>(m0, <span class="dt">what=</span><span class="st">&#39;density&#39;</span>) <span class="co">#density</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">plot_eigen</span>(m0, <span class="dt">what=</span><span class="st">&#39;APSR&#39;</span>) <span class="co">#adj, PSRF</span></span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>C-step:</strong> Reconfigure the Q matrix for the C-step with one specified loading per item based on results from the E-step. Estimate with the PCFA model by setting <em>LD=TRUE</em> (by default). Longer chain is suggested for stabler performance. <em>LD&gt;.2 &gt;.1</em> are no. of LD terms larger than .2 and .1. Results are very close to the E-step, since there’s no LD in the data.</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>Q&lt;-<span class="kw">matrix</span>(<span class="op">-</span><span class="dv">1</span>,J,K);</span>
+<span id="cb5-2"><a href="#cb5-2"></a>tmp&lt;-<span class="kw">summary</span>(m0, <span class="dt">what=</span><span class="st">&quot;qlambda&quot;</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>cind&lt;-<span class="kw">apply</span>(tmp,<span class="dv">1</span>,which.max)</span>
+<span id="cb5-4"><a href="#cb5-4"></a>Q[<span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>J),cind)]&lt;-<span class="dv">1</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#alternatively</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="co">#Q[1:6,1]&lt;-Q[7:12,2]&lt;-Q[13:18,3]&lt;-1 # 1 for specified items</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a></span>
+<span id="cb5-8"><a href="#cb5-8"></a>m1 &lt;-<span class="st"> </span><span class="kw">pcfa</span>(<span class="dt">dat =</span> dat, <span class="dt">Q =</span> Q, <span class="dt">burn =</span> <span class="dv">2000</span>, <span class="dt">iter =</span> <span class="dv">2000</span>)</span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="kw">summary</span>(m1)</span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="kw">summary</span>(m1, <span class="dt">what =</span> <span class="st">&#39;qlambda&#39;</span>)</span>
+<span id="cb5-11"><a href="#cb5-11"></a><span class="kw">summary</span>(m1, <span class="dt">what =</span> <span class="st">&#39;offpsx&#39;</span>) <span class="co">#summarize significant LD terms</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a><span class="kw">summary</span>(m1,<span class="dt">what=</span><span class="st">&#39;eigen&#39;</span>)</span>
+<span id="cb5-13"><a href="#cb5-13"></a></span>
+<span id="cb5-14"><a href="#cb5-14"></a><span class="co">#plotting factorial eigenvalue</span></span>
+<span id="cb5-15"><a href="#cb5-15"></a>oldmar &lt;-<span class="st"> </span><span class="kw">par</span>(<span class="st">&quot;mar&quot;</span>)</span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="kw">par</span>(<span class="dt">mar =</span> <span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">4</span>))</span>
+<span id="cb5-17"><a href="#cb5-17"></a><span class="kw">plot_eigen</span>(m1) <span class="co"># trace</span></span>
+<span id="cb5-18"><a href="#cb5-18"></a><span class="kw">plot_eigen</span>(m1, <span class="dt">what=</span><span class="st">&#39;density&#39;</span>) <span class="co">#density</span></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="kw">plot_eigen</span>(m1, <span class="dt">what=</span><span class="st">&#39;APSR&#39;</span>) <span class="co">#adj, PSRF</span></span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>CFA-LD:</strong> One can also configure the Q matrix for a CFA model with local dependence (i.e. without any unspecified loading) based on results from the C-step. Results are also very close.</li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>Q&lt;-<span class="kw">summary</span>(m1, <span class="dt">what=</span><span class="st">&quot;qlambda&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>Q[Q<span class="op">!=</span><span class="dv">0</span>]&lt;-<span class="dv">1</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>Q</span>
+<span id="cb6-4"><a href="#cb6-4"></a></span>
+<span id="cb6-5"><a href="#cb6-5"></a>m2 &lt;-<span class="st"> </span><span class="kw">pcfa</span>(<span class="dt">dat =</span> dat, <span class="dt">Q =</span> Q, <span class="dt">burn =</span> <span class="dv">2000</span>, <span class="dt">iter =</span> <span class="dv">2000</span>)</span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">summary</span>(m2)</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="kw">summary</span>(m2, <span class="dt">what =</span> <span class="st">&#39;qlambda&#39;</span>) </span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="kw">summary</span>(m2, <span class="dt">what =</span> <span class="st">&#39;offpsx&#39;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="kw">summary</span>(m2,<span class="dt">what=</span><span class="st">&#39;eigen&#39;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="kw">plot_eigen</span>(m2) <span class="co"># Eigens&#39; traces are excellent without regulazation of the loadings</span></span></code></pre></div>
+</div>
+<div id="continuous-data-with-local-dependence" class="section level2">
+<h2>Continuous Data with Local Dependence:</h2>
+<ol style="list-style-type: decimal">
+<li>Load the the data, loading pattern (<em>qlam</em>), and LD terms, and setup the design matrix Q.</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>dat &lt;-<span class="st"> </span>sim18cfa1<span class="op">$</span>dat</span>
+<span id="cb7-2"><a href="#cb7-2"></a>J &lt;-<span class="st"> </span><span class="kw">ncol</span>(dat) <span class="co"># no. of items</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>K &lt;-<span class="st"> </span><span class="dv">3</span> <span class="co"># no. of factors</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>sim18cfa1<span class="op">$</span>qlam</span>
+<span id="cb7-5"><a href="#cb7-5"></a>sim18cfa1<span class="op">$</span>LD <span class="co"># effect size = .3</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a>Q&lt;-<span class="kw">matrix</span>(<span class="op">-</span><span class="dv">1</span>,J,K); <span class="co"># -1 for unspecified items</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>Q[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,<span class="dv">1</span>]&lt;-Q[<span class="dv">7</span><span class="op">:</span><span class="dv">8</span>,<span class="dv">2</span>]&lt;-Q[<span class="dv">13</span><span class="op">:</span><span class="dv">14</span>,<span class="dv">3</span>]&lt;-<span class="dv">1</span> <span class="co"># 1 for specified items</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>Q</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>E-step:</strong> Estimate with the PCFA-LI model (E-step) by setting <em>LD=FALSE</em>. Only a few loadings need to be specified in Q (e.g., 2 per factor). Some loading estimates are biased due to ignoring the LD. So do the eigenvalues.</li>
+</ol>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>m0 &lt;-<span class="st"> </span><span class="kw">pcfa</span>(<span class="dt">dat =</span> dat, <span class="dt">Q =</span> Q,<span class="dt">LD =</span> <span class="ot">FALSE</span>, <span class="dt">burn =</span> <span class="dv">10000</span>, <span class="dt">iter =</span> <span class="dv">10000</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="kw">summary</span>(m0)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">summary</span>(m0, <span class="dt">what =</span> <span class="st">&#39;qlambda&#39;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">summary</span>(m0,<span class="dt">what=</span><span class="st">&#39;eigen&#39;</span>)</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="kw">plot_eigen</span>(m0) <span class="co"># trace</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="kw">plot_eigen</span>(m0, <span class="dt">what=</span><span class="st">&#39;APSR&#39;</span>)</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>C-step:</strong> Reconfigure the Q matrix for the C-step with one specified loading per item based on results from the E-step. Estimate with the PCFA model by setting <em>LD=TRUE</em> (by default). The estimates are more accurate, and the LD terms can be largely recovered.</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>Q&lt;-<span class="kw">matrix</span>(<span class="op">-</span><span class="dv">1</span>,J,K);</span>
+<span id="cb9-2"><a href="#cb9-2"></a>tmp&lt;-<span class="kw">summary</span>(m0, <span class="dt">what=</span><span class="st">&quot;qlambda&quot;</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>cind&lt;-<span class="kw">apply</span>(tmp,<span class="dv">1</span>,which.max)</span>
+<span id="cb9-4"><a href="#cb9-4"></a>Q[<span class="kw">cbind</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>J),cind)]&lt;-<span class="dv">1</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>Q</span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a>m1 &lt;-<span class="st"> </span><span class="kw">pcfa</span>(<span class="dt">dat =</span> dat, <span class="dt">Q =</span> Q,<span class="dt">burn =</span> <span class="dv">10000</span>, <span class="dt">iter =</span> <span class="dv">10000</span>)</span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="kw">summary</span>(m1)</span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="kw">summary</span>(m1, <span class="dt">what =</span> <span class="st">&#39;qlambda&#39;</span>)</span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="kw">summary</span>(m1,<span class="dt">what=</span><span class="st">&#39;eigen&#39;</span>)</span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="kw">summary</span>(m1, <span class="dt">what =</span> <span class="st">&#39;offpsx&#39;</span>)</span></code></pre></div>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>CFA-LD:</strong> Configure the Q matrix for a CFA model with local dependence (i.e. without any unspecified loading) based on results from the C-step. Results are better than, but similar to the C-step.</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>Q&lt;-<span class="kw">summary</span>(m1, <span class="dt">what=</span><span class="st">&quot;qlambda&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a>Q[Q<span class="op">!=</span><span class="dv">0</span>]&lt;-<span class="dv">1</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>Q</span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a>m2 &lt;-<span class="st"> </span><span class="kw">pcfa</span>(<span class="dt">dat =</span> dat, <span class="dt">Q =</span> Q,<span class="dt">burn =</span> <span class="dv">10000</span>, <span class="dt">iter =</span> <span class="dv">10000</span>)</span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="kw">summary</span>(m2)</span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="kw">summary</span>(m2, <span class="dt">what =</span> <span class="st">&#39;qlambda&#39;</span>) </span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="kw">summary</span>(m2,<span class="dt">what=</span><span class="st">&#39;eigen&#39;</span>)</span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="kw">summary</span>(m2, <span class="dt">what =</span> <span class="st">&#39;offpsx&#39;</span>)</span>
+<span id="cb10-10"><a href="#cb10-10"></a></span>
+<span id="cb10-11"><a href="#cb10-11"></a><span class="kw">par</span>(<span class="dt">mar =</span> oldmar) <span class="co">#reset to old mar</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
