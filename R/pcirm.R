@@ -1,9 +1,8 @@
-#' @title (Generalized) Partially Confirmatory Factor Analysis
+#' @title Partially Confirmatory Item Response Model
 #'
-#' @description \code{PCFA} is a partially confirmatory approach covering a wide range of
-#' the exploratory-confirmatory continuum in factor analytic models (Chen, Guo, Zhang, & Pan, 2020).
-#' The PCFA is only for continuous data, while the generalized PCFA (GPCFA) covers both continuous and categorical data.
-#'  There are two major model variants with different constraints for identification. One assumes local
+#' @description \code{pcirm} is a partially confirmatory approach to item response models (Chen, 2020),
+#' which estimates the intercept for continuous and dichotomous data. Similar to PCFA and GPCFA,
+#'  there are two major model variants with different constraints for identification. One assumes local
 #'  independence (LI) with a more exploratory tendency, which can be also called the E-step.
 #'  The other allows local dependence (LD) with a more confirmatory tendency, which can be also
 #'  called the C-step. Parameters are obtained by sampling from the posterior distributions with
@@ -11,10 +10,10 @@
 #'  regularize the loading pattern and LD. The estimation results can be summarized with \code{\link{summary.lawbl}}
 #'  and the factorial eigenvalue can be plotted with \code{\link{plot_eigen}}.
 #'
-#' @name pcfa
+#' @name pcirm
 #'
 #' @param dat A \eqn{N \times J} data \emph{matrix} or \emph{data.frame} consisting of the
-#'     responses of \eqn{N} individuals to \eqn{J} items.
+#'     responses of \eqn{N} individuals to \eqn{J} items. Only continuous and dichotomous data are supported.
 #'
 #' @param Q A \eqn{J \times K} design matrix for the loading pattern with \eqn{K} factors and \eqn{J} items.
 #' Elements are 1, -1, and 0 for specified, unspecified, and zero-fixed loadings, respectively. For models with
@@ -24,7 +23,7 @@
 #'
 #' @param LD logical; \code{TRUE} for allowing LD (model with LD or C-step).
 #'
-#' @param cati The set of categorical (polytomous) items in sequence number (i.e., 1 to \eqn{J});
+#' @param cati The set of dichotomous items in sequence number (i.e., 1 to \eqn{J});
 #' \code{NULL} for no and -1 for all items (default is \code{NULL}).
 #'
 #' @param PPMC logical; \code{TRUE} for conducting posterior predictive model checking.
@@ -44,24 +43,24 @@
 #' @param digits Number of significant digits to print when printing numeric values.
 #'
 #' @param verbose logical; to display the sampling information every \code{update} or not.
+#'
 #' \itemize{
 #'     \item \code{Feigen}: Eigenvalue for each factor.
 #'     \item \code{NLA_lg3}: Number of Loading estimates > .3 for each factor.
 #'     \item \code{Shrink}: Ave. shrinkage parameter (for adaptive LASSO) for each factor.
 #'     \item \code{Adj PSR}: Adjusted PSR for each factor.
-#'     \item \code{Ave. Thd}: Ave. thresholds.
-#'     \item \code{Acc Rate}: Acceptance rate of threshold (MH algorithm).
+#'     \item \code{Ave. Int.}: Ave. item intercept.
 #'     \item \code{LD>.2 >.1 LD>.2 >.1}: # of LD terms larger than .2 and .1, and LD's shrinkage parameter.
 #' }
 #'
-#' @return \code{pcfa} returns an object of class \code{lawbl} without item intercepts. It contains a lot of information about
+#' @return \code{pcirm} returns an object of class \code{lawbl} with item intercepts. It contains a lot of information about
 #' the posteriors that can be summarized using \code{\link{summary.lawbl}}. The factorial eigenvalue
 #'  can be plotted with \code{\link{plot_eigen}}.
 #'
 #' @references
 #'
-#' Chen, J., Guo, Z., Zhang, L., & Pan, J. (2020). A partially confirmatory approach to scale development
-#'  with the Bayesian Lasso. \emph{Psychological Methods}. Advance online publication. DOI: 10.1037/met0000293.
+#' Chen, J. (2020). A partially confirmatory approach to the multidimensional item response theory with the Bayesian Lasso.
+#' \emph{Psychometrika}. 85(3), 738-774. DOI:10.1007/s11336-020-09724-3.
 #'
 #' @importFrom MASS mvrnorm
 #'
@@ -69,37 +68,34 @@
 #'
 #' @examples
 #' \donttest{
-#'#####################################################
-#'#  Example 1: Estimation with continuous data & LD  #
-#'#####################################################
+#'####################################
+#'#  Example 1: Estimation with LD   #
+#'####################################
 #'
-#' dat <- sim18cfa1$dat
+#' dat <- sim24ccfa21$dat
 #' J <- ncol(dat)
 #' K <- 3
 #' Q<-matrix(-1,J,K);
-#' Q[1:6,1]<-Q[7:12,2]<-Q[13:18,3]<-1
+#' Q[1:8,1]<-Q[9:16,2]<-Q[17:24,3]<-1
 #'
-#' m0 <- pcfa(dat = dat, Q = Q, LD = TRUE,burn = 2000, iter = 2000)
+#' m0 <- pcirm(dat = dat, Q = Q, LD = TRUE, cati = -1, burn = 2000,iter = 2000)
 #' summary(m0) # summarize basic information
 #' summary(m0, what = 'qlambda') #summarize significant loadings in pattern/Q-matrix format
 #' summary(m0, what = 'offpsx') #summarize significant LD terms
 #'
-#'######################################################
-#'#  Example 1: Estimation with categorical data & LI  #
-#'######################################################
-#' dat <- sim18ccfa40$dat
-#' J <- ncol(dat)
-#' K <- 3
-#' Q<-matrix(-1,J,K);
-#' Q[1:2,1]<-Q[7:8,2]<-Q[13:14,3]<-1
+#'####################################
+#'#  Example 2: Estimation with LD   #
+#'####################################
 #'
-#' m1 <- pcfa(dat = dat, Q = Q,LD = FALSE,cati=-1,burn = 2000, iter = 2000)
+#' Q<-cbind(Q,-1);
+#' Q[15:16,4]<-1
+#'
+#' m1 <- pcirm(dat = dat, Q = Q, LD = FALSE, cati = -1, burn = 2000,iter = 2000)
 #' summary(m1) # summarize basic information
 #' summary(m1, what = 'qlambda') #summarize significant loadings in pattern/Q-matrix format
 #' summary(m1, what = 'offpsx') #summarize significant LD terms
-#' summary(m1,what='thd') #thresholds for categorical items
 #' }
-pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter = 5000, update = 1000, missing = NA, rseed = 12345,
+pcirm <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter = 5000, update = 1000, missing = NA, rseed = 12345,
     digits = 4, alas = FALSE, verbose = FALSE) {
 
     cand_thd = 0.2
@@ -174,8 +170,12 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
 
     if (Jp > 0) {
         mnoc <- const$mnoc
+        if (mnoc>2)
+            stop("PCIRM is only for continuous or dichotomous data.", call. = FALSE)
         Etd <- array(0, dim = c(iter, Jp, mnoc - 1))
     }
+
+
     accrate <- 0
     if (Nmis > 0)
         Y[mind] <- rnorm(Nmis)
@@ -199,10 +199,11 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
 
     ptm <- proc.time()
     for (ii in 1:miter) {
-        # i <- 1
+        # ii <- 1
         g = ii - burn
         OME <- Gibbs_Omega(y = Y, la = LA, phi = PHI, inv.psx = inv.PSX, N = N, K = K)
         # PHI<-MH_PHI(ph0=PHI,ome=Omega)
+        MU<-Gibbs_MU(y=Y,ome=OME,la=LA,inv.psx=inv.PSX, N = N, J = J,prior = prior)
 
         if (LD) {
             tmp <- Gibbs_PSX(y = Y, ome = OME, la = LA, psx = PSX, inv.psx = inv.PSX, const = const,
@@ -210,10 +211,10 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
             PSX <- tmp$obj
             inv.PSX <- tmp$inv
             gammas <- tmp$gammas
-            LAY <- GwMH_LA_MYC(y = Y, ome = OME, la = LA, psx = PSX, gammal_sq = gammal_sq, thd = THD,
+            LAY <- Gibbs_LA_IYC(y = Y, mu = MU, ome = OME, la = LA, psx = PSX, gammal_sq = gammal_sq, thd = THD,
                 const = const, prior = prior, alas = alas)
         } else {
-            LAY <- GwMH_LA_MYE(y = Y, ome = OME, la = LA, psx = PSX, gammal_sq = gammal_sq, thd = THD,
+            LAY <- Gibbs_LA_IYE(y = Y, mu = MU, ome = OME, la = LA, psx = PSX, gammal_sq = gammal_sq, thd = THD,
                 const = const, prior = prior, alas = alas)
             PSX <- LAY$psx
             inv.PSX <- chol2inv(chol(PSX))
@@ -249,7 +250,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
         # Omega<-Gibbs_Omega(y=Y,la=LA,phi=PHI,inv.psx=inv.PSX)
         if (Jp > 0) {
             Y[cati, ] <- LAY$ys
-            THD <- LAY$thd
+            # THD <- LAY$thd
             accrate <- accrate + LAY$accr
         }
         if (Nmis > 0)
@@ -270,9 +271,9 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
             Egammal[g, ] <- colMeans(sqrt(gammal_sq))
             # EPHI[g, , ] <- PHI[, ]
             EPHI[g, ] <- PHI[lower.tri(PHI)]
-            # EMU[g,]<-MU
-            if (Jp > 0)
-                Etd[g, , ] <- THD[, 2:mnoc]
+            EMU[g,]<-MU
+            # if (Jp > 0)
+            #     Etd[g, , ] <- THD[, 2:mnoc]
             if (PPMC)
                 Eppmc[g] <- post_pp(y = Y, ome = OME, la = LA, psx = PSX, inv.psx = inv.PSX, N = N,
                   J = J)
@@ -322,11 +323,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
                 # cat(chg_count, fill = TRUE, labels = '#Sign change:')
                 if (g > 0) cat(t(APSR[,1]), fill = TRUE, labels = "Adj PSR")
 
-                if (Jp > 0) {
-                    cat(colMeans(THD), fill = TRUE, labels = "Ave. Thd:")
-                    cat(accrate[1]/update, fill = TRUE, labels = "Acc Rate:")
-                    accrate <- 0
-                }
+                cat(mean(MU), fill = TRUE, labels = "Ave. Int.:")
 
                 if (LD) {
                     opsx <- abs(PSX[row(PSX) != col(PSX)])
@@ -335,6 +332,11 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
                     print(tmp)
                 }
 
+                # if (Jp > 0) {
+                #     cat(colMeans(THD), fill = TRUE, labels = "Ave. Thd:")
+                #     cat(accrate/update, fill = TRUE, labels = "Acc Rate:")
+                #     accrate <- 0
+                # }
                 # print(chg_count) cat(chg_count, fill = TRUE, labels = '#Sign change:')
 
             }#end verbose
@@ -348,6 +350,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
         print(proc.time()-ptm)
     }
 
+
     if (conv != 0) {
         st <- g/2 + 1
         ELA <- ELA[(st):g, ]
@@ -356,8 +359,9 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
         EPHI <- EPHI[(st):g, ]
         Egammal <- Egammal[(st):g, ]
         Egammas <- Egammas[(st):g, ]
-        if (Jp > 0)
-            Etd <- Etd[(st):g, , ]
+        EMU <- EMU[(st):g,]
+        # if (Jp > 0)
+        #     Etd <- Etd[(st):g, , ]
         Eppmc <- Eppmc[(st):g]
         mOmega <- mOmega/2
         iter <- burn <- g/2
@@ -368,7 +372,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
     #     GRD_max = GRD_max)
     out <- list(Q = Q, LD = LD, LA = ELA, Omega = mOmega/iter, PSX = EPSX, iter = iter, burn = burn,
                 PHI = EPHI, gammal = Egammal, gammas = Egammas, Nmis = Nmis, PPP = Eppmc, conv = conv,
-                Eigen = Eigen, APSR = APSR)
+                Eigen = Eigen, APSR = APSR, MU = EMU)
 
     if (Jp > 0) {
         out$cati = cati

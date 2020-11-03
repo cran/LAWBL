@@ -19,6 +19,7 @@
 #' @return NULL
 #'
 #' @importFrom graphics plot
+#' @importFrom graphics par
 #'
 #' @export
 #'
@@ -28,7 +29,7 @@
 #' J <- ncol(dat)
 #' K <- 3
 #' Q<-matrix(-1,J,K);
-#' Q[1:2,1]<-Q[9:10,2]<-Q[13:14,3]<-1
+#' Q[1:2,1]<-Q[7:8,2]<-Q[13:14,3]<-1
 #'
 #'
 #' m0 <- pcfa(dat = dat, Q = Q, LD = FALSE,burn = 1000, iter = 1000)
@@ -39,6 +40,10 @@
 plot_eigen <- function(obj, what = "trace") {
     if (class(obj) != "lawbl")
         stop("It must be a lawbl object.", call. = F)
+
+    oldmar <- par("mar")
+    par(mar = rep(2, 4))
+
     Q <- obj$Q
     poq <- which(Q != 0, arr.ind = T)
     iter <- obj$iter
@@ -62,4 +67,5 @@ plot_eigen <- function(obj, what = "trace") {
            density = plot(mcmc(eig_arr), trace = F, xlab = "",cex.main = 1),
         stop(sprintf("Can not plot element '%s'", what), call. = FALSE))
 
+    par(mar = oldmar) #reset to old mar
 }

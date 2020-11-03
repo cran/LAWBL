@@ -5,8 +5,14 @@
 
 [![Project Status: Active ? The project has reached a stable, usable
 state and is being actively
-developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+developed.](http://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/LAWBL)](https://cran.r-project.org/package=LAWBL)
+
+## How to cite the package
+
+Chen, J. (2020). LAWBL: Latent (variable) analysis with Bayesian
+learning (R package version 1.3.0). Retrieved from
+<https://CRAN.R-project.org/package=LAWBL>
 
 ## Installation
 
@@ -29,31 +35,39 @@ install.packages("LAWBL")
 devtools::install_github("Jinsong-Chen/LAWBL")
 ```
 
-## What can this package do?
+## What can this package do
 
-The long-term goal of **LAWBL** is to provide a analytical framework for
-modeling latent variables with different Bayesian learning methods.
+The long-term goal of **LAWBL** is to provide an analytical framework
+for modeling latent variables with different Bayesian learning methods.
 
 Currently, this package includes the Partially Confirmatory Factor
-Analysis (PCFA), a partially confirmatory approach covering a wide range
-of the exploratory-confirmatory continuum in factor analytic models
-(Chen, Guo, Zhang, & Pan, 2020). There are two major model variants with
-different constraints for identification. One assumes local independence
-(LI) with a more exploratory tendency, which can be also called the
-E-step. The other allows local dependence (LD) with a more confirmatory
-tendency, which can be also called the C-step. Parameters are obtained
-by sampling from the posterior distributions with the Markov chain Monte
-Carlo (MCMC) techniques. Different Bayesian Lasso methods are used to
-regularize the loading pattern and local dependence.
-
-Although only continuous data are supported currently, inclusion of
-mixed-type data is on schedule. More Bayesian learning approaches will
-be also included in future releases of this package.
+Analysis (PCFA) model for continuous data (Chen, Guo, Zhang, & Pan,
+2020), the generalized PCFA (GPCFA) model covering continuous,
+categorical, and mixed-type data, and the partially confirmatory item
+response model (PCIRM) for continuous and dichotomous data with
+intercept terms (Chen, 2020). The three models represent a partially
+confirmatory approach covering a wide range of the
+exploratory-confirmatory continuum under the context of factor analysis
+and item response theory. For PCFA, GPCFA, and PCIRM, there are two
+major model variants with different constraints for identification. One
+assumes local independence (LI) with a more exploratory tendency, which
+can be also called the E-step. The other allows local dependence (LD)
+with a more confirmatory tendency, which can be also called the C-step.
+Parameters are obtained by sampling from the posterior distributions
+with the Markov chain Monte Carlo (MCMC) techniques. Different Bayesian
+Lasso methods are used to regularize the loading pattern and local
+dependence.
 
 For examples of how to use the package, see vignettes or
-[here](https://jinsong-chen.github.io/LAWBL/articles/pcfa-examples.html).
 
-## How to use this package?
+  - For PCFA with continuous data:
+    [here](https://jinsong-chen.github.io/LAWBL/articles/pcfa-examples.html)
+  - For GPCFA with categorical and mixed-type data:
+    [here](https://jinsong-chen.github.io/LAWBL/articles/gpcfa-examples.html)
+  - For PCIRM with dichotomous data and intercept terms:
+    [here](https://jinsong-chen.github.io/LAWBL/articles/pcirm-examples.html)
+
+## How to use this package in brief
 
   - To estimate the E-step (when only a few loadings can be specified,
     e.g., 2 per factor), use *m \<- pcfa(dat=dat,Q=Q,LD=F)*
@@ -74,4 +88,8 @@ For examples of how to use the package, see vignettes or
 Chen, J., Guo, Z., Zhang, L., & Pan, J. (2020). A partially confirmatory
 approach to scale development with the Bayesian Lasso. *Psychological
 Methods*. Advance online publication.
-<http://dx.doi.org/10.1037/met0000293>
+<http://dx.doi.org/10.1037/met0000293>.
+
+Chen, J. (2020). A partially confirmatory approach to the
+multidimensional item response theory with the Bayesian Lasso.
+*Psychometrika*. 85(3), 738-774. DOI: 10.1007/s11336-020-09724-3.

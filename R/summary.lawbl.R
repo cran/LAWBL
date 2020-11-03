@@ -9,14 +9,16 @@
 #' @param what A list of options for what to summarize.
 #'
 #' \itemize{
-#'      \item \code{basic}: Basic information about the model and posteriors.
+#'     \item \code{basic}: Basic information about the model and posteriors.
 #'     \item \code{lambda}: Loading estimates.
 #'     \item \code{qlambda}: Loading estimates in pattern/Q-matrix format.
 #'     \item \code{eigen}: Factorial eigen value.
 #'     \item \code{dpsx}: Diagonal elements in the residual covariance matrix \code{PSX}.
 #'     \item \code{offpsx}: Off-diagonal elements in \code{PSX}; local dependence terms.
 #'     \item \code{phi}: Factorial correlations.
-#'     \item \code{shrink}: (Ave) shrinkage for each facor's loadings and LD (if \code{LD} in \code{pcfa} = T).
+#'     \item \code{thd}: Threshold estimates.
+#'     \item \code{int}: Intercept estimates (for  \code{\link{pcirm}} only).
+#'     \item \code{shrink}: (Ave) shrinkage for each factor's loadings and LD (if \code{LD} in \code{pcfa} = T).
 #'     \item \code{all}: All above information.
 #'  }
 #'
@@ -40,14 +42,13 @@
 #' J <- ncol(dat)
 #' K <- 3
 #' Q<-matrix(-1,J,K);
-#' Q[1:2,1]<-Q[9:10,2]<-Q[13:14,3]<-1
+#' Q[1:2,1]<-Q[7:8,2]<-Q[13:14,3]<-1
 #'
 #' m0 <- pcfa(dat = dat, Q = Q, LD = FALSE,burn = 1000, iter = 1000)
 #' summary(m0) # summarize basic information
 #' summary(m0, what = 'lambda') #summarize significant loadings
 #' summary(m0, what = 'qlambda') #summarize significant loadings in pattern/Q-matrix format
 #' summary(m0, what = 'offpsx') #summarize significant LD terms
-#' summary(m0, what = 'all') #summarize all information
 #' }
 
 summary.lawbl <- function(object, what = "basic", med = FALSE, SL = 0.05, detail = FALSE, digits = 4, ...) {
@@ -151,13 +152,14 @@ summary.lawbl <- function(object, what = "basic", med = FALSE, SL = 0.05, detail
     Jp <- length(object$cati)
     if (Jp > 0) {
         nthd <- object$mnoc - 1
-        if (nthd == 1) {
-            Mthd <- result(object$THD, med, SL)
-            row.names(Mthd) <- paste0("I", 1:Jp)
-        } else {
+        # if (nthd == 1) {
+        #     Mthd <- result(object$THD[, , 1], med, SL)
+        #     row.names(Mthd) <- paste0("I", 1:Jp)
+        # } else {
 
             if (!detail) {
                 Mthd <- matrix(0, Jp, nthd)
+                row.names(Mthd) <- paste0("I", 1:Jp)
             } else {
                 Mthd <- NULL
             }
@@ -170,7 +172,7 @@ summary.lawbl <- function(object, what = "basic", med = FALSE, SL = 0.05, detail
                   Mthd <- rbind(Mthd, tmpt)
                 }
             }
-        }
+        # } # end nthd
         out0$"Cat Items" <- object$cati
         out0$"max No. of categories" = nthd + 1
         # out$THD = Mthd
@@ -181,8 +183,16 @@ summary.lawbl <- function(object, what = "basic", med = FALSE, SL = 0.05, detail
     if (!is.null(object$PPP))
         out0$PPP <- mean(object$PPP)
 
+    if(!is.null(object$MU)){
+        MU <- result(object$MU, med, SL)
+        row.names(MU) <- paste0("I", 1:J)
+    }else{
+        MU <- NULL
+    }
+
+
     out <- switch(what, basic = out0, lambda = LAM, qlambda = MLA, eigen = eigen, dpsx = dpsx, offpsx = offpsx,
-        phi = phi, shrink = allgam, threshold = Mthd, all = {
+        phi = phi, shrink = allgam, thd = Mthd, int = MU, all = {
             out1 <- out0
             out1$lambda <- LAM
             out1$qlambda <- MLA
@@ -191,7 +201,8 @@ summary.lawbl <- function(object, what = "basic", med = FALSE, SL = 0.05, detail
             out1$offpsx <- offpsx
             out1$phi <- phi
             out1$shrink <- allgam
-            out1$threshold <- Mthd
+            out1$thd <- Mthd
+            out1$int <- MU
             out1
         }, stop(sprintf("Can not show element '%s'", what), call. = FALSE))
 

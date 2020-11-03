@@ -2,9 +2,12 @@
 
 S3method(summary,lawbl)
 export(pcfa)
+export(pcirm)
 export(plot_eigen)
+export(sim_lvm)
 import(MASS)
 import(coda)
 import(stats)
 importFrom(MASS,mvrnorm)
+importFrom(graphics,par)
 importFrom(graphics,plot)

@@ -1,5 +1,5 @@
 ################## update Loading ##############################################################
-GwMH_LA_MYC0 <- function(y, mu = 0, ome, la, psx, gammal_sq, thd, const, prior, alas) {
+Gibbs_LA_IYC <- function(y, mu, ome, la, psx, gammal_sq, thd, const, prior, alas) {
     # y=Y;ome=OME;la=LA;psx=PSX;mu=0;thd=THD;const=const;prior=prior
     Q <- const$Q
     J <- const$J
@@ -75,7 +75,36 @@ GwMH_LA_MYC0 <- function(y, mu = 0, ome, la, psx, gammal_sq, thd, const, prior, 
     if(!alas)
         gammal_sq[Q==-1]<- rgamma(1, shape=a_gamma+sum(Q==-1), rate=b_gamma + sum(taul_sq)/2)
 
-        out <- list(la = la, gammal_sq = gammal_sq, psx = psx)
+    if (Nmis > 0 || Jp > 0) {
+        # yst<-la[pind,]%*%ome+mst[pind,]
+        ysta <- la %*% ome + mst
+        spsxa <- sqrt(psxjs)
+        ysa <- matrix(rnorm(N * J), J, N) + ysta/spsxa
+        ysa <- ysa/apply(ysa, 1, sd)
 
+        if (Jp > 0) {
+
+            pind <- const$cati
+            # inf <- const$inf
+            zind <- const$zind
+
+            ys <- ysa[pind, ]
+            acc <- ((ys > 0) ==(zind>1))
+            ys <- ys * acc + (1 - acc) * y[pind, ]
+            # accr<-c(mean(accind),mean(acc1),mean(sel),mean(ptd0),mean(ptd1))
+            accr <- c( mean(acc, na.rm = T))
+
+            out <- list(la = la, gammal_sq = gammal_sq, ys = ys, thd = thd, accr = accr, psx = psx,
+                ysm = ysa)
+        } else {
+            out <- list(la = la, gammal_sq = gammal_sq, psx = psx, ysm = ysa)
+        }
+    } else {
+        out <- list(la = la, gammal_sq = gammal_sq, psx = psx)
+    }  #end Nmis || Jp
+
+    # return(list(la=la,lamsq=lamsq,ome=ome,tausq=tausq,ys=ys,sdy=sdy,sup=sup))
     return(out)
 }
+
+################## end of update Loading ########################################################

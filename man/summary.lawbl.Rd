@@ -20,14 +20,16 @@
 \item{what}{A list of options for what to summarize.
 
 \itemize{
-     \item \code{basic}: Basic information about the model and posteriors.
+    \item \code{basic}: Basic information about the model and posteriors.
     \item \code{lambda}: Loading estimates.
     \item \code{qlambda}: Loading estimates in pattern/Q-matrix format.
     \item \code{eigen}: Factorial eigen value.
     \item \code{dpsx}: Diagonal elements in the residual covariance matrix \code{PSX}.
     \item \code{offpsx}: Off-diagonal elements in \code{PSX}; local dependence terms.
     \item \code{phi}: Factorial correlations.
-    \item \code{shrink}: (Ave) shrinkage for each facor's loadings and LD (if \code{LD} in \code{pcfa} = T).
+    \item \code{thd}: Threshold estimates.
+    \item \code{int}: Intercept estimates (for  \code{\link{pcirm}} only).
+    \item \code{shrink}: (Ave) shrinkage for each factor's loadings and LD (if \code{LD} in \code{pcfa} = T).
     \item \code{all}: All above information.
  }}
 
@@ -53,13 +55,12 @@ dat <- sim18cfa0$dat
 J <- ncol(dat)
 K <- 3
 Q<-matrix(-1,J,K);
-Q[1:2,1]<-Q[9:10,2]<-Q[13:14,3]<-1
+Q[1:2,1]<-Q[7:8,2]<-Q[13:14,3]<-1
 
 m0 <- pcfa(dat = dat, Q = Q, LD = FALSE,burn = 1000, iter = 1000)
 summary(m0) # summarize basic information
 summary(m0, what = 'lambda') #summarize significant loadings
 summary(m0, what = 'qlambda') #summarize significant loadings in pattern/Q-matrix format
 summary(m0, what = 'offpsx') #summarize significant LD terms
-summary(m0, what = 'all') #summarize all information
 }
 }

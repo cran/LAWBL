@@ -4,8 +4,8 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{pcfa-examples}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
   <!-- \usepackage[utf8]{inputenc} -->
+  %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
   chunk_output_type: console
 ---
@@ -13,7 +13,7 @@ editor_options:
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "R>"
 )
 ```
 
@@ -36,11 +36,11 @@ Q[1:2,1]<-Q[7:8,2]<-Q[13:14,3]<-1 # 1 for specified items
 Q
 ```
 
-2) **E-step:** Estimate with the PCFA-LI model (E-step) by setting *LD=F*. Only a few loadings need to be specified in Q (e.g., 2 per factor). Longer chain is suggested for stabler performance (*burn=iter=5,000* by default). Note the sampling information is updated every 1000 draws by default, with *Feigen* for factorial eigenvalue, "*NLA_lg3*" for no. of $\lambda$ larger than .3, *Shrink* for shrinkage, and *Adj PSR* for adjusted PSRF. Estimates are close to the true values.
+2) **E-step:** Estimate with the PCFA-LI model (E-step) by setting *LD=F*. Only a few loadings need to be specified in Q (e.g., 2 per factor). Longer chain is suggested for stabler performance (*burn=iter=5,000* by default).
 
 
 ```{r}
-m0 <- pcfa(dat = dat, Q = Q,LD = FALSE, burn = 2000, iter = 2000)
+m0 <- pcfa(dat = dat, Q = Q,LD = FALSE, burn = 2000, iter = 2000,verbose = TRUE)
 
 # summarize basic information
 summary(m0)
@@ -52,13 +52,12 @@ summary(m0, what = 'qlambda')
 summary(m0,what='eigen') 
 
 #plotting factorial eigenvalue
-par(mar = rep(2, 4))
 plot_eigen(m0) # trace
 plot_eigen(m0, what='density') #density
 plot_eigen(m0, what='APSR') #adj, PSRF
 ```
 
-3) **C-step:** Reconfigure the Q matrix for the C-step with one specified loading per item based on results from the E-step. Estimate with the PCFA model by setting *LD=TRUE* (by default). Longer chain is suggested for stabler performance. *LD>.2 >.1* are no. of LD terms larger than .2 and .1. Results are very close to the E-step, since there's no LD in the data.
+3) **C-step:** Reconfigure the Q matrix for the C-step with one specified loading per item based on results from the E-step. Estimate with the PCFA model by setting *LD=TRUE* (by default). Longer chain is suggested for stabler performance. Results are very close to the E-step, since there's no LD in the data.
 
 ```{r eval=FALSE}
 Q<-matrix(-1,J,K);
@@ -68,15 +67,14 @@ Q[cbind(c(1:J),cind)]<-1
 #alternatively
 #Q[1:6,1]<-Q[7:12,2]<-Q[13:18,3]<-1 # 1 for specified items
 
-m1 <- pcfa(dat = dat, Q = Q, burn = 2000, iter = 2000)
+m1 <- pcfa(dat = dat, Q = Q, burn = 2000, iter = 2000,verbose = TRUE)
 summary(m1)
 summary(m1, what = 'qlambda')
 summary(m1, what = 'offpsx') #summarize significant LD terms
 summary(m1,what='eigen')
 
 #plotting factorial eigenvalue
-oldmar <- par("mar")
-par(mar = rep(2, 4))
+# par(mar = rep(2, 4))
 plot_eigen(m1) # trace
 plot_eigen(m1, what='density') #density
 plot_eigen(m1, what='APSR') #adj, PSRF
@@ -89,13 +87,13 @@ Q<-summary(m1, what="qlambda")
 Q[Q!=0]<-1
 Q
 
-m2 <- pcfa(dat = dat, Q = Q, burn = 2000, iter = 2000)
+m2 <- pcfa(dat = dat, Q = Q, burn = 2000, iter = 2000,verbose = TRUE)
 summary(m2)
 summary(m2, what = 'qlambda') 
 summary(m2, what = 'offpsx')
 summary(m2,what='eigen')
 
-plot_eigen(m2) # Eigens' traces are excellent without regulazation of the loadings
+plot_eigen(m2) # Eigens' traces are excellent without regularization of the loadings
 ```
 
 ## Continuous Data with Local Dependence:
@@ -118,7 +116,7 @@ Q
 2) **E-step:** Estimate with the PCFA-LI model (E-step) by setting *LD=FALSE*. Only a few loadings need to be specified in Q (e.g., 2 per factor). Some loading estimates are biased due to ignoring the LD. So do the eigenvalues.
 
 ```{r eval=FALSE}
-m0 <- pcfa(dat = dat, Q = Q,LD = FALSE, burn = 10000, iter = 10000)
+m0 <- pcfa(dat = dat, Q = Q,LD = FALSE, burn = 4000, iter = 4000,verbose = TRUE)
 summary(m0)
 summary(m0, what = 'qlambda')
 summary(m0,what='eigen')
@@ -136,7 +134,7 @@ cind<-apply(tmp,1,which.max)
 Q[cbind(c(1:J),cind)]<-1
 Q
 
-m1 <- pcfa(dat = dat, Q = Q,burn = 10000, iter = 10000)
+m1 <- pcfa(dat = dat, Q = Q,burn = 4000, iter = 4000,verbose = TRUE)
 summary(m1)
 summary(m1, what = 'qlambda')
 summary(m1,what='eigen')
@@ -151,11 +149,10 @@ Q<-summary(m1, what="qlambda")
 Q[Q!=0]<-1
 Q
 
-m2 <- pcfa(dat = dat, Q = Q,burn = 10000, iter = 10000)
+m2 <- pcfa(dat = dat, Q = Q,burn = 4000, iter = 4000,verbose = TRUE)
 summary(m2)
 summary(m2, what = 'qlambda') 
 summary(m2,what='eigen')
 summary(m2, what = 'offpsx')
 
-par(mar = oldmar) #reset to old mar
 ```
