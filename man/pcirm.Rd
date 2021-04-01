@@ -55,8 +55,9 @@ without any specified loading. See \code{Examples}.}
 
 \itemize{
     \item \code{Feigen}: Eigenvalue for each factor.
-    \item \code{NLA_lg3}: Number of Loading estimates > .3 for each factor.
-    \item \code{Shrink}: Ave. shrinkage parameter (for adaptive LASSO) for each factor.
+    \item \code{NLA_le3}: Number of Loading estimates >= .3 for each factor.
+    \item \code{Shrink}: Shrinkage (or ave. shrinkage for each factor for adaptive Lasso).
+    \item \code{sign_sw}: Number of sign switch.
     \item \code{Adj PSR}: Adjusted PSR for each factor.
     \item \code{Ave. Int.}: Ave. item intercept.
     \item \code{LD>.2 >.1 LD>.2 >.1}: # of LD terms larger than .2 and .1, and LD's shrinkage parameter.
@@ -64,8 +65,7 @@ without any specified loading. See \code{Examples}.}
 }
 \value{
 \code{pcirm} returns an object of class \code{lawbl} with item intercepts. It contains a lot of information about
-the posteriors that can be summarized using \code{\link{summary.lawbl}}. The factorial eigenvalue
- can be plotted with \code{\link{plot_eigen}}.
+the posteriors that can be summarized using \code{\link{summary.lawbl}}.
 }
 \description{
 \code{pcirm} is a partially confirmatory approach to item response models (Chen, 2020),
@@ -76,7 +76,7 @@ which estimates the intercept for continuous and dichotomous data. Similar to PC
  called the C-step. Parameters are obtained by sampling from the posterior distributions with
  the Markov chain Monte Carlo (MCMC) techniques. Different Bayesian Lasso methods are used to
  regularize the loading pattern and LD. The estimation results can be summarized with \code{\link{summary.lawbl}}
- and the factorial eigenvalue can be plotted with \code{\link{plot_eigen}}.
+ and the factorial eigenvalue can be plotted with \code{\link{plot_lawbl}}.
 }
 \examples{
 \donttest{

@@ -29,7 +29,7 @@
 #' Simulated CCFA data with LI and missingness
 #'
 #' Categorical CFA data simulated based on 18 items, 3 factors, and 4 categories
-#' with local independence and  10% missingness at random; factorial correlation \eqn{\Phi=.3}.
+#' with local independence and  10 percent missingness at random; factorial correlation \eqn{\Phi=.3}.
 #'
 #' @format A list with components:
 #' \describe{
@@ -42,7 +42,7 @@
 #' Simulated CCFA data with LD and missingness
 #'
 #' Categorical CFA data simulated based on 18 items, 3 factors, and 4 categories
-#' with local dependence and  10% missingness at random; factorial correlation \eqn{\Phi=.3}.
+#' with local dependence and  10 percent missingness at random; factorial correlation \eqn{\Phi=.3}.
 #'
 #'
 #' @format A list with components:
@@ -57,13 +57,13 @@
 #' Simulated MCFA data with LD and Missingness
 #'
 #' CFA data mixed with continuous and categorical responses simulated based on 3 factors,
-#' 12 4-category items, 6 continuous items, local dependence, and 10% missigness at random;
+#' 6 4-category items, 12 continuous items, local dependence, and 10 percent missigness at random;
 #' factorial correlation \eqn{\Phi=.3}.
 #'
 #'
 #' @format A list with components:
 #' \describe{
-#' \item{\code{dat}}{A dataset with simulated responses of 500 individuals to 18 items}
+#' \item{\code{dat}}{A dataset with simulated responses of 1000 individuals to 18 items}
 #' \item{\code{qlam}}{Loading pattern and values used to simulated the data}
 #' \item{\code{LD}}{Local dependence between items (LD effect = .3)}
 #' }
@@ -86,4 +86,18 @@
 #' }
 #'
 "sim24ccfa21"
+
+#' National Longitudinal Survey of Youth 1997
+#'
+#' A data set consisted of 3,458 individual responses to 27 mixed-type items, with a 1.12 percentage of missing data
+#'
+#'
+#' @format A list with components:
+#' \describe{
+#' \item{\code{dat}}{The response data}
+#' \item{\code{Q}}{Intial design matrix with three factors and two to three specified loadings per factor}
+#' \item{\code{cati}}{Indices of categorical (polytomous) items}
+#' }
+#'
+"nlsy27"
 

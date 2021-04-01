@@ -9,6 +9,7 @@ pcfa(
   Q,
   LD = TRUE,
   cati = NULL,
+  cand_thd = 0.2,
   PPMC = FALSE,
   burn = 5000,
   iter = 5000,
@@ -35,6 +36,8 @@ without any specified loading. See \code{Examples}.}
 \item{cati}{The set of categorical (polytomous) items in sequence number (i.e., 1 to \eqn{J});
 \code{NULL} for no and -1 for all items (default is \code{NULL}).}
 
+\item{cand_thd}{Candidate parameter for sampling the thresholds with the MH algorithm.}
+
 \item{PPMC}{logical; \code{TRUE} for conducting posterior predictive model checking.}
 
 \item{burn}{Number of burn-in iterations before posterior sampling.}
@@ -54,18 +57,18 @@ without any specified loading. See \code{Examples}.}
 \item{verbose}{logical; to display the sampling information every \code{update} or not.
 \itemize{
     \item \code{Feigen}: Eigenvalue for each factor.
-    \item \code{NLA_lg3}: Number of Loading estimates > .3 for each factor.
-    \item \code{Shrink}: Ave. shrinkage parameter (for adaptive LASSO) for each factor.
+    \item \code{NLA_le3}: Number of Loading estimates >= .3 for each factor.
+    \item \code{Shrink}: Shrinkage (or ave. shrinkage for each factor for adaptive Lasso).
+    \item \code{sign_sw}: Number of sign switch.
     \item \code{Adj PSR}: Adjusted PSR for each factor.
-    \item \code{Ave. Thd}: Ave. thresholds.
+    \item \code{Ave. Thd}: Ave. thresholds for polytomous items.
     \item \code{Acc Rate}: Acceptance rate of threshold (MH algorithm).
     \item \code{LD>.2 >.1 LD>.2 >.1}: # of LD terms larger than .2 and .1, and LD's shrinkage parameter.
 }}
 }
 \value{
 \code{pcfa} returns an object of class \code{lawbl} without item intercepts. It contains a lot of information about
-the posteriors that can be summarized using \code{\link{summary.lawbl}}. The factorial eigenvalue
- can be plotted with \code{\link{plot_eigen}}.
+the posteriors that can be summarized using \code{\link{summary.lawbl}}.
 }
 \description{
 \code{PCFA} is a partially confirmatory approach covering a wide range of
@@ -77,7 +80,7 @@ The PCFA is only for continuous data, while the generalized PCFA (GPCFA) covers 
  called the C-step. Parameters are obtained by sampling from the posterior distributions with
  the Markov chain Monte Carlo (MCMC) techniques. Different Bayesian Lasso methods are used to
  regularize the loading pattern and LD. The estimation results can be summarized with \code{\link{summary.lawbl}}
- and the factorial eigenvalue can be plotted with \code{\link{plot_eigen}}.
+ and the factorial eigenvalue can be plotted with \code{\link{plot_lawbl}}.
 }
 \examples{
 \donttest{
@@ -97,7 +100,7 @@ summary(m0, what = 'qlambda') #summarize significant loadings in pattern/Q-matri
 summary(m0, what = 'offpsx') #summarize significant LD terms
 
 ######################################################
-#  Example 1: Estimation with categorical data & LI  #
+#  Example 2: Estimation with categorical data & LI  #
 ######################################################
 dat <- sim18ccfa40$dat
 J <- ncol(dat)

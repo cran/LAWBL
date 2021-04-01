@@ -9,7 +9,7 @@
 #'  called the C-step. Parameters are obtained by sampling from the posterior distributions with
 #'  the Markov chain Monte Carlo (MCMC) techniques. Different Bayesian Lasso methods are used to
 #'  regularize the loading pattern and LD. The estimation results can be summarized with \code{\link{summary.lawbl}}
-#'  and the factorial eigenvalue can be plotted with \code{\link{plot_eigen}}.
+#'  and the factorial eigenvalue can be plotted with \code{\link{plot_lawbl}}.
 #'
 #' @name pcfa
 #'
@@ -26,6 +26,8 @@
 #'
 #' @param cati The set of categorical (polytomous) items in sequence number (i.e., 1 to \eqn{J});
 #' \code{NULL} for no and -1 for all items (default is \code{NULL}).
+#'
+#' @param cand_thd Candidate parameter for sampling the thresholds with the MH algorithm.
 #'
 #' @param PPMC logical; \code{TRUE} for conducting posterior predictive model checking.
 #'
@@ -46,17 +48,17 @@
 #' @param verbose logical; to display the sampling information every \code{update} or not.
 #' \itemize{
 #'     \item \code{Feigen}: Eigenvalue for each factor.
-#'     \item \code{NLA_lg3}: Number of Loading estimates > .3 for each factor.
-#'     \item \code{Shrink}: Ave. shrinkage parameter (for adaptive LASSO) for each factor.
+#'     \item \code{NLA_le3}: Number of Loading estimates >= .3 for each factor.
+#'     \item \code{Shrink}: Shrinkage (or ave. shrinkage for each factor for adaptive Lasso).
+#'     \item \code{sign_sw}: Number of sign switch.
 #'     \item \code{Adj PSR}: Adjusted PSR for each factor.
-#'     \item \code{Ave. Thd}: Ave. thresholds.
+#'     \item \code{Ave. Thd}: Ave. thresholds for polytomous items.
 #'     \item \code{Acc Rate}: Acceptance rate of threshold (MH algorithm).
 #'     \item \code{LD>.2 >.1 LD>.2 >.1}: # of LD terms larger than .2 and .1, and LD's shrinkage parameter.
 #' }
 #'
 #' @return \code{pcfa} returns an object of class \code{lawbl} without item intercepts. It contains a lot of information about
-#' the posteriors that can be summarized using \code{\link{summary.lawbl}}. The factorial eigenvalue
-#'  can be plotted with \code{\link{plot_eigen}}.
+#' the posteriors that can be summarized using \code{\link{summary.lawbl}}.
 #'
 #' @references
 #'
@@ -85,7 +87,7 @@
 #' summary(m0, what = 'offpsx') #summarize significant LD terms
 #'
 #'######################################################
-#'#  Example 1: Estimation with categorical data & LI  #
+#'#  Example 2: Estimation with categorical data & LI  #
 #'######################################################
 #' dat <- sim18ccfa40$dat
 #' J <- ncol(dat)
@@ -99,10 +101,10 @@
 #' summary(m1, what = 'offpsx') #summarize significant LD terms
 #' summary(m1,what='thd') #thresholds for categorical items
 #' }
-pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter = 5000, update = 1000, missing = NA, rseed = 12345,
-    digits = 4, alas = FALSE, verbose = FALSE) {
+pcfa <- function(dat, Q, LD = TRUE,cati = NULL,cand_thd = 0.2, PPMC = FALSE, burn = 5000, iter = 5000,
+                 update = 1000, missing = NA, rseed = 12345, digits = 4, alas = FALSE, verbose = FALSE) {
 
-    cand_thd = 0.2
+
     conv = 0
 
     if (nrow(Q) != ncol(dat))
@@ -124,6 +126,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
     Y[which(Y == missing)] <- NA
     N <- ncol(Y)
     J <- nrow(Y)
+    int<-F #intercept retained or not
     Q <- as.matrix(Q)
     K <- ncol(Q)
     Jp <- length(cati)
@@ -135,7 +138,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
     Nmis <- sum(is.na(Y))
     mind <- which(is.na(Y), arr.ind = TRUE)
 
-    const <- list(N = N, J = J, K = K, Q = Q, cati = cati, Jp = Jp, Nmis = Nmis, cand_thd = cand_thd)
+    const <- list(N = N, J = J, K = K, Q = Q, cati = cati, Jp = Jp, Nmis = Nmis, cand_thd = cand_thd, int = int)
 
     ######## Init ########################################################
     miter <- iter + burn
@@ -181,11 +184,8 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
         Y[mind] <- rnorm(Nmis)
 
     # OME <- t(mvrnorm(N,mu=rep(0,K),Sigma=diag(1,K))) # J*N
-    chg_count <- rep(0, K)
-    chg0_count <- rep(0, K)
-    # chg1_count <- rep(0, K)
-    # Jest <- colSums(Q != 0)
-    LA_eps <- -1
+    sign_sw <- rep(0, K)
+    sign_eps <- -.5
 
     Eigen <- array(0, dim = c(iter, K))  #Store retained trace of Eigen
     tmp <- which(Q!=0,arr.ind=TRUE)
@@ -233,14 +233,14 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
         # }
         # LA <- LA1
 
-
-        chg <- (colSums(LA)<= LA_eps)
+        chg <- (colSums(LA)<= sign_eps)
+        # chg <- (colSums(LA)<= LA_eps)
         if (any(chg)) {
             sign <- diag(1 - 2 * chg)
-            if(g<0){chg0_count <- chg0_count + chg}else{chg_count <- chg_count + chg}
+            sign_sw <- sign_sw + chg
+            # if(g<0){chg0_count <- chg0_count + chg}else{chg_count <- chg_count + chg}
             LA <- LA %*% sign
             OME <- t(t(OME) %*% sign)
-
         }
 
         gammal_sq <- LAY$gammal_sq
@@ -313,12 +313,12 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
                 # print(proc.time() - ptm)
                 Shrink <- colMeans(sqrt(gammal_sq))
                 Feigen <- diag(crossprod(LA))
-                NLA_lg3 <- colSums(abs(LA) > 0.3)
+                NLA_le3 <- colSums(abs(LA) >= 0.3)
                 # Meigen <- colMeans(Eigen)
                 # Mlambda<-colMeans(LA)
 
                 cat(ii, fill = TRUE, labels = "\nTot. Iter =")
-                print(rbind(Feigen, NLA_lg3, Shrink))
+                print(rbind(Feigen, NLA_le3, Shrink,sign_sw))
                 # cat(chg_count, fill = TRUE, labels = '#Sign change:')
                 if (g > 0) cat(t(APSR[,1]), fill = TRUE, labels = "Adj PSR")
 
@@ -335,7 +335,8 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
                     print(tmp)
                 }
 
-                # print(chg_count) cat(chg_count, fill = TRUE, labels = '#Sign change:')
+                # print(chg_count)
+                # cat(chg_count, fill = TRUE, labels = '#sign sw:')
 
             }#end verbose
 
@@ -344,7 +345,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
     }  #end of g MCMAX
 
     if(verbose){
-        cat(chg0_count,chg_count, fill = TRUE, labels = "\n#Sign change:")
+        # cat(chg0_count,chg_count, fill = TRUE, labels = "\n#Sign change:")
         print(proc.time()-ptm)
     }
 
@@ -363,9 +364,7 @@ pcfa <- function(dat, Q, LD = TRUE,cati = NULL, PPMC = FALSE, burn = 5000, iter 
         iter <- burn <- g/2
     }
 
-    # out <- list(Q = Q, LD = LD, LA = ELA, Omega = mOmega/iter, PSX = EPSX, iter = iter, burn = burn,
-    #     PHI = EPHI, gammal = Egammal, gammas = Egammas, Nmis = Nmis, PPP = Eppmc, conv = conv, GRD_mean = GRD_mean,
-    #     GRD_max = GRD_max)
+    # chg1_count<-rbind(chg0_count,chg_count)
     out <- list(Q = Q, LD = LD, LA = ELA, Omega = mOmega/iter, PSX = EPSX, iter = iter, burn = burn,
                 PHI = EPHI, gammal = Egammal, gammas = Egammas, Nmis = Nmis, PPP = Eppmc, conv = conv,
                 Eigen = Eigen, APSR = APSR)
