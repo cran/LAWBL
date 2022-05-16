@@ -11,6 +11,8 @@
   SL = 0.05,
   detail = FALSE,
   digits = 4,
+  istart = 1,
+  iend = -1,
   ...
 )
 }
@@ -41,6 +43,10 @@
 \item{detail}{logical; if only significant (\code{FALSE}) or all (\code{TRUE}) estimates are presented.}
 
 \item{digits}{Number of significant digits to print when printing numeric values.}
+
+\item{istart}{Starting point of the Markov chain for summary.}
+
+\item{iend}{Ending point of the Markov chain for summary; -1 for the actual final point.}
 
 \item{...}{additional arguments}
 }

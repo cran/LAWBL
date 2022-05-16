@@ -4,7 +4,7 @@
 \alias{plot_lawbl}
 \title{Posterior plots for \code{lawbl} object}
 \usage{
-plot_lawbl(object, what = "trace")
+plot_lawbl(object, what = "trace", istart = 1, iend = -1)
 }
 \arguments{
 \item{object}{A \code{lawbl} object}
@@ -14,8 +14,12 @@ plot_lawbl(object, what = "trace")
 \itemize{
      \item \code{trace}: The trace of each factor's eigenvalue.
     \item \code{density}: The trace of each factor's eigenvalue.
-    \item \code{APSR}: The adjusted (single-chain) Gelman-Rubin diagnostics of each factor's eigenvalue.
+    \item \code{EPSR}: Estimated Potential Scale Reduction (Gelman-Rubin diagnostics) for each factor.
  }}
+
+\item{istart}{Starting point of the Markov chain for plotting.}
+
+\item{iend}{Ending point of the Markov chain for plotting; -1 for the actual final point.}
 }
 \description{
 Provide posterior plots based on the factorial eigenvalues of a \code{lawbl} object.
@@ -33,6 +37,6 @@ Q[1:2,1]<-Q[7:8,2]<-Q[13:14,3]<-1
 m0 <- pcfa(dat = dat, Q = Q, LD = FALSE,burn = 1000, iter = 1000)
 plot_lawbl(m0) # trace
 plot_lawbl(m0, what='density')
-plot_lawbl(m0, what='APSR')
+plot_lawbl(m0, what='EPSR')
 }
 }
